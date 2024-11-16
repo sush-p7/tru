@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
+import 'package:tru/model/my_data.dart';
 import 'package:tru/widgets/app_bar.dart';
 import 'package:tru/widgets/assets/btn.dart';
+import 'package:tru/widgets/item_list.dart';
 
 class PoApprovel extends StatefulWidget {
   const PoApprovel({super.key});
@@ -13,6 +15,7 @@ class PoApprovel extends StatefulWidget {
 }
 
 class _PoApprovelState extends State<PoApprovel> {
+  List<Map> staticData = MyData.data;
   final List<Map<String, String>> poOptions = [
     {'value': 'Approvels', 'label': 'My Approvels'},
     {'value': 'Requests', 'label': 'My Requests'},
@@ -80,9 +83,11 @@ class _PoApprovelState extends State<PoApprovel> {
                             },
                           ),
                         ),
-                        const Padding(
+                        const SingleChildScrollView(
                           padding: EdgeInsets.only(top: 20.0),
+                          scrollDirection: Axis.horizontal,
                           child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               BtnPrimary(
                                 btnText: 'All PO',
@@ -109,6 +114,26 @@ class _PoApprovelState extends State<PoApprovel> {
                                 btnWidth: 92,
                               ),
                             ],
+                          ),
+                        ),
+                        SingleChildScrollView(
+                          child: Container(
+                            color: Colors.green,
+                            height: 550,
+                            // child: ListView.builder(
+                            //   itemBuilder: (builder, index) {
+                            //     Map data = staticData[index];
+                            //     return ListTile(
+                            //       title: Text("${data['name']}"),
+                            //       subtitle: Text("${data['email']}"),
+                            //       leading: CircleAvatar(
+                            //         child: Text('${data['id']}'),
+                            //       ),
+                            //     );
+                            //   },
+                            //   itemCount: staticData.length,
+                            // ),
+                            child: MultiSelectListView(),
                           ),
                         )
                       ],

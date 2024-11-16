@@ -7,13 +7,15 @@ class BtnPrimary extends StatelessWidget {
   final double txtBoxFontSize;
   final double? btnWidth;
   final double? btnHeight;
+  final VoidCallback? callback;
 
   const BtnPrimary(
       {super.key,
       required this.btnText,
       required this.txtBoxFontSize,
       this.btnWidth,
-      this.btnHeight});
+      this.btnHeight,
+      this.callback});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class BtnPrimary extends StatelessWidget {
         height: btnHeight ?? 50,
         child: ElevatedButton(
           clipBehavior: Clip.antiAlias,
-          onPressed: () {},
+          onPressed: callback,
           style: const ButtonStyle(
               backgroundColor: WidgetStatePropertyAll(AppColors.primaryText)),
           child: Text(

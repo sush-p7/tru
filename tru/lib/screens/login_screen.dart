@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tru/screens/po_approval.dart';
 import 'package:tru/widgets/assets/btn.dart';
 import '../assets/app_colors.dart';
 import '../widgets/assets/txt_box.dart';
@@ -13,7 +14,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Center(
         child: SingleChildScrollView(
@@ -22,7 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
             //crossAxisAlignment: CrossAxisAlignment.center,
 
             children: [
-              Padding(
+              const Padding(
                 padding: EdgeInsets.only(bottom: 50),
                 child: Icon(
                   Icons.supervised_user_circle,
@@ -30,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   size: 100,
                 ),
               ),
-              TxtRoundedFill(
+              const TxtRoundedFill(
                 hintText: 'Enter Your URL',
                 txtBoxLabel: 'URL',
                 txtBoxWidth: 266,
@@ -38,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 txtBoxBorderRadius: 25,
                 isPassword: false,
               ),
-              TxtRoundedFill(
+              const TxtRoundedFill(
                 hintText: 'Enter Your Company',
                 txtBoxLabel: 'Company',
                 txtBoxWidth: 266,
@@ -46,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 txtBoxBorderRadius: 25,
                 isPassword: false,
               ),
-              TxtRoundedFill(
+              const TxtRoundedFill(
                 hintText: 'Enter Your UserID',
                 txtBoxLabel: 'UserID',
                 txtBoxWidth: 266,
@@ -54,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 txtBoxBorderRadius: 25,
                 isPassword: false,
               ),
-              TxtRoundedFill(
+              const TxtRoundedFill(
                 hintText: 'Enter Your Password',
                 txtBoxLabel: 'Password',
                 txtBoxWidth: 266,
@@ -63,10 +64,17 @@ class _LoginScreenState extends State<LoginScreen> {
                 isPassword: true,
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: 50, top: 50),
+                padding: const EdgeInsets.only(bottom: 50, top: 50),
                 child: BtnPrimary(
                   btnText: "login",
                   txtBoxFontSize: 18,
+                  callback: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const PoApprovel()),
+                    );
+                  },
                 ),
               )
             ],
