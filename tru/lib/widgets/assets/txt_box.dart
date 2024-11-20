@@ -10,6 +10,7 @@ class TxtRoundedFill extends StatelessWidget {
   final double txtBoxBorderRadius;
   final String? txtBoxhelperText;
   final bool isPassword;
+  final TextEditingController? textEditingController;
 
   const TxtRoundedFill(
       {super.key,
@@ -19,7 +20,8 @@ class TxtRoundedFill extends StatelessWidget {
       required this.txtBoxFontSize,
       required this.txtBoxBorderRadius,
       this.txtBoxhelperText,
-      required this.isPassword});
+      required this.isPassword,
+      this.textEditingController});
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,7 @@ class TxtRoundedFill extends StatelessWidget {
       child: SizedBox(
         width: 266,
         child: TextField(
+          controller: textEditingController,
           obscureText: isPassword,
           decoration: InputDecoration(
             labelText: txtBoxLabel,

@@ -19,7 +19,7 @@ class _ItemListState extends State<ItemList> {
         itemBuilder: (builder, index) {
           Map data = staticData[index];
           selectedFlag[index] = selectedFlag[index] ?? false;
-          bool? isSelected = selectedFlag[index];
+          //bool? isSelected = selectedFlag[index];
           return ListTile(
             title: Text("${data['name']}"),
             subtitle: Text("${data['email']}"),
@@ -35,6 +35,8 @@ class _ItemListState extends State<ItemList> {
 }
 
 class MultiSelectListView extends StatefulWidget {
+  const MultiSelectListView({super.key});
+
   @override
   _MultiSelectListViewState createState() => _MultiSelectListViewState();
 }
@@ -47,10 +49,10 @@ class _MultiSelectListViewState extends State<MultiSelectListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Multi-Selection ListView (Gmail Style)'),
+        title: const Text('Multi-Selection ListView (Gmail Style)'),
         actions: [
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: () {
               setState(() {
                 emails.removeWhere(
@@ -71,7 +73,7 @@ class _MultiSelectListViewState extends State<MultiSelectListView> {
               setState(() {
                 if (selectedIndexes.contains(index)) {
                   selectedIndexes.remove(index);
-                  print("Run");
+                  //print("Run");
                 } else {
                   selectedIndexes.add(index);
                 }
