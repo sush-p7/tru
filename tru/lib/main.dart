@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:tru/screens/login_screen.dart';
-import 'package:tru/screens/po_approval.dart';
+//import 'package:tru/screens/po_approval.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
