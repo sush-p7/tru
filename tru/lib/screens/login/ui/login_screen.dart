@@ -22,8 +22,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    // _userAuthBloc.add(IsLogin());
     super.initState();
     context.read<AuthBloc>().add(CheckAuthStatus());
   }
@@ -31,15 +29,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AuthBloc, AuthState>(
-      // listener: (context, state) {
-      //   if (state is NavAuthScreenToPOApprovelState ||
-      //       state is AuthSucessState) {
-      //     Navigator.pushReplacement(
-      //       context,
-      //       MaterialPageRoute(builder: (context) => const PoApprovel()),
-      //     );
-      //   }
-      // },
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
           Navigator.pushReplacement(
@@ -54,8 +43,6 @@ class _LoginScreenState extends State<LoginScreen> {
           );
         }
       },
-      // buildWhen: (previous, current) => current is! UserAuthState,
-      // listenWhen: (previous, current) => current is UserAuthState,
       builder: (context, state) {
         return Scaffold(
           resizeToAvoidBottomInset: true,
@@ -129,15 +116,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                     );
                               }
                             },
-
-                      //  () {
-                      //   context.read<UserAuthBloc>().add(AfterLoginButtonClick(
-                      //       domainURL:
-                      //           'https://erp-application.jwllogic.com/e11Pilot2100/TokenResource.svc/',
-                      //       compnay: 'JWL',
-                      //       password: _passCode.text,
-                      //       username: _userName.text));
-                      // },
                     ),
                   )
                 ],
