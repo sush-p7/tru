@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
@@ -27,11 +28,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     try {
-      emit(state.copyWith(isLoading: true));
+      emit(state.copyWith(
+        status: AuthStatus.checking,
+        isLoading: true,
+      ));
+
+      // emit(state.copyWith(isLoading: true));
+      // https://erp-application.jwllogic.com/e11Pilot2100/TokenResource.svc/
+      print("Conrol reached");
+      final String ENV = event.ENV.trim();
+      final String URL = event.URL.trim();
+      await storage.write(key: 'ENV', value: ENV);
+      await storage.write(key: 'URL', value: URL);
 
       final response = await httpClient.post(
-        Uri.parse(
-            "https://erp-application.jwllogic.com/e11Pilot2100/TokenResource.svc/"),
+        Uri.parse("https://${URL}/${ENV}/TokenResource.svc/"),
         body: {
           'Password': event.password,
           'Username': event.username,
@@ -47,6 +58,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         final token = responseData['AccessToken'];
         await storage.write(key: 'AccessToken', value: token);
+        // log("New token" + token);
 
         emit(state.copyWith(
           status: AuthStatus.authenticated,
@@ -71,9 +83,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     Emitter<AuthState> emit,
   ) async {
     try {
-      emit(state.copyWith(isLoading: true));
+      // print(object)
+      emit(state.copyWith(
+        status: AuthStatus.checking,
+        isLoading: true,
+      ));
+
+      //emit(state.copyWith(isLoading: true));
 
       final storedToken = await storage.read(key: 'AccessToken');
+      final ENV = await storage.read(key: 'ENV');
+      final URL = await storage.read(key: 'URL');
 
       if (storedToken == null) {
         emit(state.copyWith(
@@ -84,8 +104,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       final response = await httpClient.post(
-        Uri.parse(
-            'https://erp-application.jwllogic.com/e11Pilot2100/TokenResource.svc/'),
+        Uri.parse('https://${URL}/${ENV}/TokenResource.svc/'),
         headers: {
           'Authorization': 'Bearer $storedToken',
           'Content-Type': 'application/json',
@@ -98,6 +117,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         await storage.write(key: 'AccessToken', value: newToken);
 
+        // print("storedToken :-   " + storedToken);
+        // print("New replace toekn token  :-  " + newToken);
         emit(state.copyWith(
           status: AuthStatus.authenticated,
           token: newToken,

@@ -6,6 +6,7 @@ import 'package:tru/screens/login/bloc/user_auth_bloc.dart';
 import 'package:tru/screens/login/ui/login_screen.dart';
 //import 'package:tru/screens/po_approval.dart';
 import 'package:http/http.dart' as http;
+import 'package:tru/screens/splash/ui/splash.dart';
 // import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 void main() {
@@ -14,7 +15,14 @@ void main() {
     statusBarIconBrightness: Brightness.dark,
     statusBarBrightness: Brightness.light,
   ));
-  runApp(const MyApp());
+  runApp(MultiBlocProvider(providers: [
+    BlocProvider(
+      create: (context) => AuthBloc(
+        storage: const FlutterSecureStorage(),
+        httpClient: http.Client(),
+      ),
+    )
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -24,26 +32,26 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return
+        // MultiBlocProvider(
+        //   providers: [
+        //     BlocProvider(
+        //       create: (context) => AuthBloc(
+        //         storage: const FlutterSecureStorage(),
+        //         httpClient: http.Client(),
+        //       ),
+        //     )
+        //   ],
+        //   child:
+        MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => AuthBloc(
-              storage: const FlutterSecureStorage(),
-              httpClient: http.Client(),
-            ),
-          )
-        ],
-
-        // create: (context) => AuthBloc(),
-        child: const LoginScreen(),
-      ),
+      home: const SplashScreen(),
+      // ),
     );
   }
 }

@@ -31,4 +31,4 @@ class AuthState extends Equatable {
   List<Object?> get props => [status, errorMessage, token, isLoading];
 }
 
-enum AuthStatus { initial, authenticated, unauthenticated, error }
+enum AuthStatus { initial, authenticated, unauthenticated, error, checking }

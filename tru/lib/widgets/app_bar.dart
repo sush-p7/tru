@@ -5,7 +5,8 @@ import 'package:tru/assets/app_colors.dart';
 import 'package:tru/widgets/assets/btn_round_icon.dart';
 
 class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
-  const AppBarCustom({super.key});
+  final VoidCallback? openDrower;
+  const AppBarCustom({super.key, this.openDrower});
 
   @override
   Size get preferredSize => const Size.fromHeight(100.0);
@@ -16,15 +17,16 @@ class AppBarCustom extends StatelessWidget implements PreferredSizeWidget {
       leadingWidth: 100,
       toolbarHeight: 100,
       centerTitle: true,
-      leading: const BtnRoundIcon(
+      leading: BtnRoundIcon(
         iconWidth: 60,
         iconHeight: 60,
-        customIcon: Icon(
+        customIcon: const Icon(
           Ionicons.menu_outline,
           color: Colors.white,
         ),
         iconSize: 40,
         backgroundColor: AppColors.primaryText,
+        onPressed: openDrower,
       ),
       actions: const [
         BtnRoundIcon(
