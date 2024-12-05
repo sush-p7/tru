@@ -33,6 +33,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       // emit(state.copyWith(isLoading: true));
       // https://erp-application.jwllogic.com/e11Pilot2100/TokenResource.svc/
+      // erp-application.jwllogic.com
+      // e11Pilot2100
       print("Conrol reached");
       final String ENV = event.ENV.trim();
       final String URL = event.URL.trim();
@@ -40,6 +42,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       await storage.write(key: 'ENV', value: ENV);
       await storage.write(key: 'URL', value: URL);
       await storage.write(key: 'USER', value: UerID);
+
       final response = await httpClient.post(
         Uri.parse("https://$URL/$ENV/TokenResource.svc/"),
         body: {

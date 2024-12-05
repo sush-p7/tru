@@ -46,12 +46,12 @@ class _PoApprovelState extends State<PoApprovel> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   "PO Management",
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.normal,
-                  ),
+                  style: GoogleFonts.inter(
+                      fontSize: 15,
+                      color: AppColors.primaryText,
+                      fontWeight: FontWeight.w500),
                 ),
                 // const SizedBox(height: 5),
                 DropdownButtonHideUnderline(

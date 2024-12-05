@@ -8,8 +8,12 @@ class FoodItem {
   final String code;
   final String name;
   final String price;
+  final String qty;
+  final String rate;
 
   FoodItem({
+    required this.qty,
+    required this.rate,
     required this.id,
     required this.code,
     required this.name,
@@ -52,14 +56,14 @@ class CustomFoodList extends StatelessWidget {
                   ),
                   child: ListTile(
                     title: Text(
-                      '${item.id} - ${item.code}',
+                      '${item.id} - ${item.code}\n₹ ${item.price}',
                       style: GoogleFonts.inter(
                           fontSize: 15,
                           color: AppColors.primaryText,
                           fontWeight: FontWeight.w800),
                     ),
                     subtitle: Text(
-                      '${item.name} - ${item.price}',
+                      '${item.name} \nQty -${item.qty}, Rate -${item.rate} ₹',
                       style: GoogleFonts.inter(
                           fontSize: 15,
                           color: AppColors.primaryText,
@@ -77,44 +81,5 @@ class CustomFoodList extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-// Example usage in a main screen
-class FoodListScreen extends StatelessWidget {
-  const FoodListScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    // Sample data
-    final List<FoodItem> foodItems = [
-      FoodItem(
-          id: '01',
-          code: 'JWL-SCE-00001',
-          name: 'Chicken Nuggets',
-          price: 'xx,xx,xxx/-'),
-      FoodItem(
-          id: '02',
-          code: 'JWL-SCE-00002',
-          name: 'Fish Fingers',
-          price: 'yy,yy,yyy/-'),
-      FoodItem(
-          id: '03',
-          code: 'JWL-SCE-00003',
-          name: 'Veggie Patties',
-          price: 'zz,zz,zzz/-'),
-      FoodItem(
-          id: '04',
-          code: 'JWL-SCE-00004',
-          name: 'French Fries',
-          price: 'aa,aa,aaa/-'),
-      FoodItem(
-          id: '05',
-          code: 'JWL-SCE-00005',
-          name: 'Paneer Sticks',
-          price: 'bb,bb,bbb/-'),
-    ];
-
-    return CustomFoodList(foodItems: foodItems);
   }
 }

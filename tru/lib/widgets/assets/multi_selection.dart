@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:ffi';
-
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
@@ -21,67 +23,67 @@ class _MultiSelectState extends State<MultiSelect> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: trashCan.isEmpty
-          ? AppBar(
-              title: Text(
-                'PO List',
-                style: GoogleFonts.inter(
-                    fontSize: 25,
-                    color: AppColors.primaryText,
-                    fontWeight: FontWeight.w800),
-              ),
-              centerTitle: true,
-              // backgroundColor: AppColors.background,
-            )
-          : AppBar(
-              // backgroundColor: AppColors.primaryText,
-              leading: IconButton(
-                // color: Colors.white,
-                icon: const Icon(
-                  Icons.clear,
-                  color: AppColors.primaryText,
-                ),
-                onPressed: () {
-                  setState(() {
-                    trashCan.clear();
-                  });
-                },
-              ),
-              title: Text(
-                trashCan.length.toString(),
-                style: const TextStyle(color: AppColors.primaryText),
-              ),
-              actions: [
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        // Remove all selected items from productData
-                        productData.removeWhere(
-                            (product) => trashCan.contains(product));
-                        trashCan.clear();
-                      });
-                    },
-                    icon: const Icon(
-                      Ionicons.checkmark_circle,
-                      color: Colors.green,
-                      size: 40,
-                    )),
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        // Remove all selected items from productData
-                        productData.removeWhere(
-                            (product) => trashCan.contains(product));
-                        trashCan.clear();
-                      });
-                    },
-                    icon: const Icon(
-                      Ionicons.close_circle,
-                      color: Colors.red,
-                      size: 40,
-                    ))
-              ],
-            ),
+      // appBar: trashCan.isEmpty
+      //     ? AppBar(
+      //         title: Text(
+      //           'PO List',
+      //           style: GoogleFonts.inter(
+      //               fontSize: 25,
+      //               color: AppColors.primaryText,
+      //               fontWeight: FontWeight.w800),
+      //         ),
+      //         centerTitle: true,
+      //         // backgroundColor: AppColors.background,
+      //       )
+      //     : AppBar(
+      //         // backgroundColor: AppColors.primaryText,
+      //         leading: IconButton(
+      //           // color: Colors.white,
+      //           icon: const Icon(
+      //             Icons.clear,
+      //             color: AppColors.primaryText,
+      //           ),
+      //           onPressed: () {
+      //             setState(() {
+      //               trashCan.clear();
+      //             });
+      //           },
+      //         ),
+      //         title: Text(
+      //           trashCan.length.toString(),
+      //           style: const TextStyle(color: AppColors.primaryText),
+      //         ),
+      //         actions: [
+      //           IconButton(
+      //               onPressed: () {
+      //                 setState(() {
+      //                   // Remove all selected items from productData
+      //                   productData.removeWhere(
+      //                       (product) => trashCan.contains(product));
+      //                   trashCan.clear();
+      //                 });
+      //               },
+      //               icon: const Icon(
+      //                 Ionicons.checkmark_circle,
+      //                 color: Colors.green,
+      //                 size: 40,
+      //               )),
+      //           IconButton(
+      //               onPressed: () {
+      //                 setState(() {
+      //                   // Remove all selected items from productData
+      //                   productData.removeWhere(
+      //                       (product) => trashCan.contains(product));
+      //                   trashCan.clear();
+      //                 });
+      //               },
+      //               icon: const Icon(
+      //                 Ionicons.close_circle,
+      //                 color: Colors.red,
+      //                 size: 40,
+      //               ))
+      //         ],
+      //       ),
       body: ListView(
         children: [
           const SizedBox(height: 10),
@@ -181,7 +183,11 @@ class _MultiSelectState extends State<MultiSelect> {
                         size: 40,
                       )),
                   IconButton(
-                    icon: const Icon(Ionicons.trash_bin, color: Colors.red),
+                    icon: const Icon(
+                      Ionicons.trash_bin,
+                      color: Colors.red,
+                      size: 30,
+                    ),
                     onPressed: () {
                       setState(() {
                         // Remove all selected items from productData
@@ -192,8 +198,24 @@ class _MultiSelectState extends State<MultiSelect> {
                     },
                   ),
                   IconButton(
-                    icon: const Icon(Icons.clear, color: Colors.grey),
-                    onPressed: () {
+                    icon: const Icon(Ionicons.close_outline,
+                        size: 30, color: AppColors.primaryText),
+                    onPressed: () async {
+                      final FlutterSecureStorage storage =
+                          FlutterSecureStorage();
+
+                      const String url =
+                          'https://erp-application.jwllogic.com/e11dev2100/api/v1/Erp.BO.POSvc/POes';
+
+                      final token = await storage.read(key: 'AccessToken');
+
+                      try {
+                        final data =
+                            await sendGetRequest(url: url, token: token);
+                        print('Data received: $data');
+                      } catch (e) {
+                        print('Error: $e');
+                      }
                       setState(() {
                         trashCan.clear();
                       });
@@ -359,3 +381,33 @@ List<ProductCard> productData = [
   ProductCard(id: 'JWL-SCE-000010', name: 'Chicken Nuggets', amount: 23456),
   ProductCard(id: 'JWL-SCE-000011', name: 'Chicken Nuggets', amount: 23456),
 ];
+
+//temp code
+
+Future<dynamic> sendGetRequest({
+  required String url,
+  required final token,
+}) async {
+  final FlutterSecureStorage storage;
+  final http.Client httpClient;
+  try {
+    final response = await http.get(
+      Uri.parse(url),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      // Successful response
+      return jsonDecode(response.body);
+    } else {
+      // Handle errors
+      throw Exception('Failed to fetch data: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Handle network or parsing errors
+    throw Exception('Error: $e');
+  }
+}
