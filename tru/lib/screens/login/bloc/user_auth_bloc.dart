@@ -1,11 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:bloc/bloc.dart';
-import 'package:meta/meta.dart';
 
 part 'user_auth_event.dart';
 part 'user_auth_state.dart';
@@ -38,11 +36,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       print("Conrol reached");
       final String ENV = event.ENV.trim();
       final String URL = event.URL.trim();
+      final String UerID = event.username.trim();
       await storage.write(key: 'ENV', value: ENV);
       await storage.write(key: 'URL', value: URL);
-
+      await storage.write(key: 'USER', value: UerID);
       final response = await httpClient.post(
-        Uri.parse("https://${URL}/${ENV}/TokenResource.svc/"),
+        Uri.parse("https://$URL/$ENV/TokenResource.svc/"),
         body: {
           'Password': event.password,
           'Username': event.username,
@@ -104,7 +103,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
 
       final response = await httpClient.post(
-        Uri.parse('https://${URL}/${ENV}/TokenResource.svc/'),
+        Uri.parse('https://$URL/$ENV/TokenResource.svc/'),
         headers: {
           'Authorization': 'Bearer $storedToken',
           'Content-Type': 'application/json',

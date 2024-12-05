@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:tru/screens/login/bloc/user_auth_bloc.dart';
-import 'package:tru/screens/login/ui/login_screen.dart';
 //import 'package:tru/screens/po_approval.dart';
 import 'package:http/http.dart' as http;
 import 'package:tru/screens/splash/ui/splash.dart';

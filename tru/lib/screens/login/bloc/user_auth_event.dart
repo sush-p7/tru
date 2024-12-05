@@ -13,7 +13,7 @@ class LoginRequested extends AuthEvent {
   final String URL;
   final String ENV;
 
-  LoginRequested({
+  const LoginRequested({
     required this.username,
     required this.password,
     required this.URL,
