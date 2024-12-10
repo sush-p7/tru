@@ -4,6 +4,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:bloc/bloc.dart';
+import 'package:tru/model/po_model.dart';
 
 part 'user_auth_event.dart';
 part 'user_auth_state.dart';
@@ -121,6 +122,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
         // print("storedToken :-   " + storedToken);
         // print("New replace toekn token  :-  " + newToken);
+        //await fetchPurchaseOrders();
+
         emit(state.copyWith(
           status: AuthStatus.authenticated,
           token: newToken,
@@ -148,5 +151,42 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       token: null,
       errorMessage: null,
     ));
+  }
+
+  Future<List<POHead>> fetchPurchaseOrders() async {
+    final storedToken = await storage.read(key: 'AccessToken');
+    final ENV = await storage.read(key: 'ENV');
+    final URL = await storage.read(key: 'URL');
+
+    final url = 'https://${URL}/${ENV}/api/v1/Erp.BO.POSvc/POes/';
+
+    try {
+      final response = await httpClient.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': 'Bearer $storedToken',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        //print("Purchase Orders Found: ${response.body}");
+
+        // Decode the response
+        final Map<String, dynamic> jsonResponse = json.decode(response.body);
+
+        // Extract the 'value' key which contains the list
+        final List<dynamic> jsonList = jsonResponse['value'];
+
+        // Map to POHead objects
+        return jsonList.map((json) => POHead.fromJson(json)).toList();
+      } else {
+        print('Failed to load purchase orders: ${response.body}');
+        throw Exception('Failed to load purchase orders');
+      }
+    } catch (e) {
+      print('Error in fetchPurchaseOrders: $e');
+      throw e;
+    }
   }
 }

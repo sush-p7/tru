@@ -4,7 +4,8 @@ import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
 
 class POCardSumerry extends StatefulWidget {
-  const POCardSumerry({super.key});
+  final int poNum;
+  const POCardSumerry({super.key, required this.poNum});
 
   @override
   State<POCardSumerry> createState() => _POCardSumerryState();
@@ -52,7 +53,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "61517",
+                    "${widget.poNum}",
                     style: GoogleFonts.inter(
                         fontSize: 25,
                         color: AppColors.primaryText,

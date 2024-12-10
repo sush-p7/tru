@@ -20,70 +20,10 @@ class _MultiSelectState extends State<MultiSelect> {
   bool existsInTrashCan(ProductCard productCard) =>
       trashCan.contains(productCard);
   List<ProductCard> trashCan = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: trashCan.isEmpty
-      //     ? AppBar(
-      //         title: Text(
-      //           'PO List',
-      //           style: GoogleFonts.inter(
-      //               fontSize: 25,
-      //               color: AppColors.primaryText,
-      //               fontWeight: FontWeight.w800),
-      //         ),
-      //         centerTitle: true,
-      //         // backgroundColor: AppColors.background,
-      //       )
-      //     : AppBar(
-      //         // backgroundColor: AppColors.primaryText,
-      //         leading: IconButton(
-      //           // color: Colors.white,
-      //           icon: const Icon(
-      //             Icons.clear,
-      //             color: AppColors.primaryText,
-      //           ),
-      //           onPressed: () {
-      //             setState(() {
-      //               trashCan.clear();
-      //             });
-      //           },
-      //         ),
-      //         title: Text(
-      //           trashCan.length.toString(),
-      //           style: const TextStyle(color: AppColors.primaryText),
-      //         ),
-      //         actions: [
-      //           IconButton(
-      //               onPressed: () {
-      //                 setState(() {
-      //                   // Remove all selected items from productData
-      //                   productData.removeWhere(
-      //                       (product) => trashCan.contains(product));
-      //                   trashCan.clear();
-      //                 });
-      //               },
-      //               icon: const Icon(
-      //                 Ionicons.checkmark_circle,
-      //                 color: Colors.green,
-      //                 size: 40,
-      //               )),
-      //           IconButton(
-      //               onPressed: () {
-      //                 setState(() {
-      //                   // Remove all selected items from productData
-      //                   productData.removeWhere(
-      //                       (product) => trashCan.contains(product));
-      //                   trashCan.clear();
-      //                 });
-      //               },
-      //               icon: const Icon(
-      //                 Ionicons.close_circle,
-      //                 color: Colors.red,
-      //                 size: 40,
-      //               ))
-      //         ],
-      //       ),
       body: ListView(
         children: [
           const SizedBox(height: 10),
@@ -94,25 +34,7 @@ class _MultiSelectState extends State<MultiSelect> {
             separatorBuilder: (context, index) => const SizedBox(height: 1),
             itemBuilder: (BuildContext context, int index) {
               ProductCard currentProduct = productData[index];
-              return
-                  // PrettyCard(
-                  //   name: productData[index].name,
-                  //   id: productData[index].id,
-                  //   amount: productData[index].amount,
-                  //   isSelected: existsInTrashCan(productData[index]),
-                  //   trashCan: trashCan,
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //             builder: (context) => const PODetails()));
-
-                  //     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  //       content: Text('Single Tap!'),
-                  //       duration: Duration(seconds: 1),
-                  //     ));
-                  //   },
-                  PrettyCard(
+              return PrettyCard(
                 name: currentProduct.name,
                 id: currentProduct.id,
                 amount: currentProduct.amount,
@@ -129,16 +51,6 @@ class _MultiSelectState extends State<MultiSelect> {
                     duration: Duration(seconds: 1),
                   ));
                 },
-                //   onDelete: () {
-                //     setState(() {
-                //       if (trashCan.contains(currentProduct)) {
-                //         trashCan.remove(currentProduct);
-                //       } else {
-                //         trashCan.add(currentProduct);
-                //       }
-                //     });
-                //   },
-                // );
                 onDelete: () {
                   if (trashCan.contains(productData[index])) {
                     trashCan.remove(productData[index]);
@@ -149,16 +61,6 @@ class _MultiSelectState extends State<MultiSelect> {
                   }
                 },
               );
-              // onDelete: () {
-              //   ProductCard currentProduct = productData[index];
-              //   if (trashCan.contains(currentProduct)) {
-              //     trashCan.remove(currentProduct);
-              //   } else {
-              //     trashCan.add(currentProduct);
-              //   }
-              //   setState(() {});
-              // },
-              // );
             },
           ),
         ],
@@ -229,7 +131,7 @@ class _MultiSelectState extends State<MultiSelect> {
   }
 }
 
-class PrettyCard extends StatelessWidget {
+class PrettyCard extends StatefulWidget {
   final String name;
   final String id;
   final double amount;
@@ -248,82 +150,51 @@ class PrettyCard extends StatelessWidget {
       required this.id,
       required this.amount});
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(horizontal: 12),
-  //     child: Card(
-  //       // surfaceTintColor: isSelected ? Colors.black : null,
-  //       color: AppColors.border,
-  //       shape: RoundedRectangleBorder(
-  //         borderRadius: BorderRadius.circular(15),
-  //       ),
+  @override
+  State<PrettyCard> createState() => _PrettyCardState();
+}
 
-  //       child: ListTile(
-  //         dense: true,
-  //         selected: isSelected,
-  //         onTap: trashCan.isNotEmpty ? onDelete : onTap,
-  //         onLongPress: onDelete,
-  //         selectedColor: Colors.white,
-  //         selectedTileColor: isSelected ? Colors.grey : Colors.red,
-  //         title: isSelected
-  //             ? SizedBox(
-  //                 height: 50,
-  //                 child: Row(
-  //                   children: [
-  //                     Text(
-  //                       name,
-  //                       style: const TextStyle(color: AppColors.white),
-  //                     ),
-  //                   ],
-  //                 ),
-  //               )
-  //             : const POCardSumerry(),
-  //         shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.circular(15),
-  //             side: BorderSide(
-  //                 color: Colors.cyan.shade50,
-  //                 width: 2,
-  //                 style: isSelected ? BorderStyle.solid : BorderStyle.none)),
-  //       ),
-  //     ),
-  //   );
-  // }
+class _PrettyCardState extends State<PrettyCard> {
+  List<dynamic> jsonList = [];
+  bool isLoading = true;
+  @override
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: Card(
-        color: isSelected
+        color: widget.isSelected
             ? Colors.grey.shade300
             : AppColors.border, // Visual feedback
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
           side: BorderSide(
-            color: isSelected ? Colors.blue : Colors.transparent,
+            color: widget.isSelected ? Colors.blue : Colors.transparent,
             width: 2,
           ),
         ),
 
         child: ListTile(
           dense: true,
-          onTap: trashCan.isNotEmpty ? onDelete : onTap,
-          onLongPress: onDelete, // This should trigger the selection
-          title: isSelected
+          onTap: widget.trashCan.isNotEmpty ? widget.onDelete : widget.onTap,
+          onLongPress: widget.onDelete, // This should trigger the selection
+          title: widget.isSelected
               ? SizedBox(
                   height: 50,
                   child: Row(
                     children: [
                       Text(
-                        name,
+                        widget.name,
                         style: const TextStyle(color: AppColors.primaryText),
                       ),
                     ],
                   ),
                 )
-              : const POCardSumerry(),
+              : const POCardSumerry(
+                  poNum: 77,
+                ),
           // Add a trailing widget to show selection state
-          trailing: isSelected
+          trailing: widget.isSelected
               ? const Icon(Icons.check_circle, color: Colors.blue)
               : null,
         ),

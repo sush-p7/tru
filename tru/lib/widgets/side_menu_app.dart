@@ -70,6 +70,7 @@ class UserIDWidget extends StatelessWidget {
   Future<String> getUserID() async {
     const FlutterSecureStorage storage = FlutterSecureStorage();
     final storedToken = await storage.read(key: 'USER');
+    print(storedToken);
     return storedToken ?? 'No UserID Found';
   }
 
@@ -79,16 +80,23 @@ class UserIDWidget extends StatelessWidget {
       future: getUserID(),
       builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CircularProgressIndicator();
+          return const CircularProgressIndicator(
+              backgroundColor: Colors.transparent);
         } else if (snapshot.hasError) {
           return Text(
             'Error: ${snapshot.error}',
-            style: const TextStyle(color: Colors.red, fontSize: 16),
+            style: const TextStyle(
+                color: Colors.red,
+                fontSize: 16,
+                backgroundColor: Colors.transparent),
           );
         } else {
           return Text(
             snapshot.data ?? 'No UserID Found',
-            style: const TextStyle(color: Colors.white, fontSize: 25),
+            style: const TextStyle(
+                color: Colors.white,
+                fontSize: 25,
+                backgroundColor: Colors.transparent),
           );
         }
       },

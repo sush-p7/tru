@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:tru/screens/login/bloc/user_auth_bloc.dart';
-import 'package:tru/screens/po_approval.dart';
+import 'package:tru/screens/home/ui/po_approval.dart';
 import 'package:tru/widgets/assets/btn.dart';
 import '../../../assets/app_colors.dart';
 import '../../../widgets/assets/txt_box.dart';
