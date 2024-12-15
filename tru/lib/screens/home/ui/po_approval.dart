@@ -51,24 +51,25 @@ class _PoApprovelState extends State<PoApprovel> {
         }
       },
       builder: (context, state) {
-        if (state is PORequestsLoadingState) {
-          return Center(child: CircularProgressIndicator());
-        }
+        // if (state is PORequestsLoadingState) {
+        //   return Center(child: CircularProgressIndicator());
+        // }
         // Show loaded data
-        if (state is PORequestsLoadedState) {
-          return ListView.builder(
-            itemCount: state.poRequests?.length ?? 0,
-            itemBuilder: (context, index) {
-              final poRequest = state.poRequests![index];
-              return Card(
-                child: ListTile(
-                  title: Text(poRequest['EntryPerson'] ?? 'Unknown'),
-                  // Add more details as needed
-                ),
-              );
-            },
-          );
-        }
+        // if (state is PORequestsLoadedState) {
+        //   return ListView.builder(
+        //     itemCount: state.poRequests?.length ?? 0,
+        //     itemBuilder: (context, index) {
+        //       final poRequest = state.poRequests![index];
+        //       return Card(
+        //         child: ListTile(
+        //           title: Text(poRequest['EntryPerson'] ?? 'Unknown'),
+        //           // Add more details as needed
+        //         ),
+        //       );
+        //     },
+        //   );
+        // }
+
         return Scaffold(
           key: _scaffoldKey,
           drawer: const NavDrawer(),
@@ -165,7 +166,17 @@ class _PoApprovelState extends State<PoApprovel> {
               Expanded(
                 child: Container(
                   color: Colors.green,
-                  child: const MultiSelect(),
+                  child: BlocConsumer<HomeBloc, HomeState>(
+                    listener: (context, state) {
+                      // TODO: implement listener
+                    },
+                    builder: (context, state) {
+                      if (state is PORequestsLoadingState) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      return const MultiSelect();
+                    },
+                  ),
                 ),
               ),
             ],

@@ -43,11 +43,13 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       final storedToken = await storage.read(key: 'AccessToken');
       final ENV = await storage.read(key: 'ENV');
       final URL = await storage.read(key: 'URL');
+      final USER = await storage.read(key: 'USER');
       emit(PORequestsLoadingState(selectedValue: state.selectedValue));
 
       // Prepare the API URL
       final uri = Uri.parse(
-          'https://erp-application.jwllogic.com/e11dev2100/api/v1/Erp.BO.POSvc/POes?\$filter=BuyerID eq \'tru1\'');
+        'https://erp-application.jwllogic.com/e11dev2100/api/v1/Erp.BO.POSvc/POes?\$filter=BuyerID eq \'tru1\' and VS_TypeOfPO_c ne \'IBD\'',
+      );
 
       // Make the API call
       final response = await httpClient.get(

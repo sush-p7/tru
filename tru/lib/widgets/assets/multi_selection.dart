@@ -25,117 +25,127 @@ class _MultiSelectState extends State<MultiSelect> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocConsumer<HomeBloc, HomeState>(
-        listener: (context, state) {
-          // TODO: implement listener
-        },
-        builder: (context, state) {
-          return ListView(
-            children: [
-              const SizedBox(height: 10),
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: productData.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 1),
-                itemBuilder: (BuildContext context, int index) {
-                  ProductCard currentProduct = productData[index];
-                  return PrettyCard(
-                    name: currentProduct.name,
-                    id: currentProduct.id,
-                    amount: currentProduct.amount,
-                    isSelected: trashCan.contains(currentProduct),
-                    trashCan: trashCan,
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const PODetails()));
+    return BlocBuilder<HomeBloc, HomeState>(
+      builder: (context, state) {
+        // Check if we have loaded PO requests
+        if (state is PORequestsLoadedState) {
+          // Convert API data to ProductCard if needed
+          List<ProductCard> apiProductData = state.poRequests?.map((poRequest) {
+                return ProductCard(
+                    id: poRequest['PONum'].toString() ?? 'N/A',
+                    name: poRequest['EntryPerson'] ?? 'Unknown',
+                    amount: double.tryParse(
+                            poRequest['TotalOrder']?.toString() ?? '0') ??
+                        0,
+                    vendorName: poRequest['VendorName'] ?? 'Unknown');
+              }).toList() ??
+              [];
 
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                        content: Text('Single Tap!'),
-                        duration: Duration(seconds: 1),
-                      ));
-                    },
-                    onDelete: () {
-                      if (trashCan.contains(productData[index])) {
-                        trashCan.remove(productData[index]);
-                        setState(() {});
-                      } else {
-                        trashCan.add(productData[index]);
-                        setState(() {});
-                      }
-                    },
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      ),
-      bottomNavigationBar: trashCan.isNotEmpty
-          ? BottomAppBar(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                      onPressed: () {
-                        setState(() {
-                          // Remove all selected items from productData
-                          productData.removeWhere(
-                              (product) => trashCan.contains(product));
-                          trashCan.clear();
-                        });
+          return Scaffold(
+            body: ListView(
+              children: [
+                const SizedBox(height: 10),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: apiProductData.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 1),
+                  itemBuilder: (BuildContext context, int index) {
+                    ProductCard currentProduct = apiProductData[index];
+                    return PrettyCard(
+                      name: currentProduct.name,
+                      id: currentProduct.id,
+                      amount: currentProduct.amount,
+                      isSelected: trashCan.contains(currentProduct),
+                      trashCan: trashCan,
+                      vendorName: currentProduct.vendorName,
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const PODetails()));
+
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Single Tap!'),
+                          duration: Duration(seconds: 1),
+                        ));
                       },
-                      icon: const Icon(
-                        Ionicons.checkmark_circle,
-                        color: Colors.green,
-                        size: 40,
-                      )),
-                  IconButton(
-                    icon: const Icon(
-                      Ionicons.trash_bin,
-                      color: Colors.red,
-                      size: 30,
+                      onDelete: () {
+                        if (trashCan.contains(apiProductData[index])) {
+                          trashCan.remove(apiProductData[index]);
+                          setState(() {});
+                        } else {
+                          trashCan.add(apiProductData[index]);
+                          setState(() {});
+                        }
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+            bottomNavigationBar: trashCan.isNotEmpty
+                ? BottomAppBar(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                // Remove all selected items from apiProductData
+                                apiProductData.removeWhere(
+                                    (product) => trashCan.contains(product));
+                                trashCan.clear();
+                              });
+                            },
+                            icon: const Icon(
+                              Ionicons.checkmark_circle,
+                              color: Colors.green,
+                              size: 40,
+                            )),
+                        IconButton(
+                          icon: const Icon(
+                            Ionicons.trash_bin,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              // Remove all selected items from apiProductData
+                              apiProductData.removeWhere(
+                                  (product) => trashCan.contains(product));
+                              trashCan.clear();
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Ionicons.close_outline,
+                              size: 30, color: AppColors.primaryText),
+                          onPressed: () async {},
+                        ),
+                      ],
                     ),
-                    onPressed: () {
-                      setState(() {
-                        // Remove all selected items from productData
-                        productData.removeWhere(
-                            (product) => trashCan.contains(product));
-                        trashCan.clear();
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Ionicons.close_outline,
-                        size: 30, color: AppColors.primaryText),
-                    onPressed: () async {
-                      final FlutterSecureStorage storage =
-                          FlutterSecureStorage();
+                  )
+                : null,
+          );
+        } else if (state is PORequestsLoadingState) {
+          // Show loading indicator when data is being fetched
+          return const Center(child: CircularProgressIndicator());
+        } else if (state is PORequestsErrorState) {
+          // Show error message if API call fails
+          return Center(
+            child: Text(
+              state.errorMessage ?? 'Failed to load PO Requests',
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        }
 
-                      const String url =
-                          'https://erp-application.jwllogic.com/e11dev2100/api/v1/Erp.BO.POSvc/POes';
-
-                      final token = await storage.read(key: 'AccessToken');
-
-                      try {
-                        final data =
-                            await sendGetRequest(url: url, token: token);
-                        print('Data received: $data');
-                      } catch (e) {
-                        print('Error: $e');
-                      }
-                      setState(() {
-                        trashCan.clear();
-                      });
-                    },
-                  ),
-                ],
-              ),
-            )
-          : null,
+        // Fallback state
+        return const Center(child: Text('No data available'));
+      },
     );
   }
 }
@@ -145,6 +155,7 @@ class PrettyCard extends StatefulWidget {
   final String id;
   final double amount;
   final bool isSelected;
+  final String vendorName;
   final void Function()? onDelete;
   final void Function()? onTap;
   final List trashCan;
@@ -157,7 +168,8 @@ class PrettyCard extends StatefulWidget {
       this.onTap,
       required this.trashCan,
       required this.id,
-      required this.amount});
+      required this.amount,
+      required this.vendorName});
 
   @override
   State<PrettyCard> createState() => _PrettyCardState();
@@ -200,7 +212,10 @@ class _PrettyCardState extends State<PrettyCard> {
                   ),
                 )
               : POCardSumerry(
-                  poNum: 77,
+                  poNum: widget.id,
+                  name: widget.name,
+                  amount: widget.amount,
+                  vendorName: widget.vendorName,
                   // poData: widget.poData,
                 ),
           // Add a trailing widget to show selection state
@@ -213,82 +228,26 @@ class _PrettyCardState extends State<PrettyCard> {
   }
 }
 
-class Course {
-  final String id;
-  final String name;
-  Course({
-    required this.id,
-    required this.name,
-  });
-}
-
-List<Course> coursesData = [
-  Course(id: '1', name: 'MTH'),
-  Course(id: '2', name: 'STS'),
-  Course(id: '3', name: 'ACC'),
-  Course(id: '4', name: 'ETH'),
-  Course(id: '5', name: 'PHY'),
-  Course(id: '6', name: 'CSC'),
-  Course(id: '7', name: 'MTH'),
-  Course(id: '8', name: 'STS'),
-  Course(id: '9', name: 'ACC'),
-  Course(id: '10', name: 'ETH'),
-  Course(id: '11', name: 'PHY'),
-  Course(id: '12', name: 'CSC'),
-];
-
 class ProductCard {
   final String id;
   final String name;
   final double amount;
+  final String vendorName;
 
   ProductCard({
     required this.id,
     required this.name,
     required this.amount,
+    required this.vendorName,
   });
-}
 
-List<ProductCard> productData = [
-  ProductCard(id: 'JWL-SCE-00001', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-00002', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-00003', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-00004', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-00005', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-00006', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-00007', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-00008', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-00009', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-000010', name: 'Chicken Nuggets', amount: 23456),
-  ProductCard(id: 'JWL-SCE-000011', name: 'Chicken Nuggets', amount: 23456),
-];
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ProductCard &&
+          runtimeType == other.runtimeType &&
+          id == other.id;
 
-//temp code
-
-Future<dynamic> sendGetRequest({
-  required String url,
-  required final token,
-}) async {
-  final FlutterSecureStorage storage;
-  final http.Client httpClient;
-  try {
-    final response = await http.get(
-      Uri.parse(url),
-      headers: {
-        'Authorization': 'Bearer $token',
-        'Content-Type': 'application/json',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      // Successful response
-      return jsonDecode(response.body);
-    } else {
-      // Handle errors
-      throw Exception('Failed to fetch data: ${response.statusCode}');
-    }
-  } catch (e) {
-    // Handle network or parsing errors
-    throw Exception('Error: $e');
-  }
+  @override
+  int get hashCode => id.hashCode;
 }

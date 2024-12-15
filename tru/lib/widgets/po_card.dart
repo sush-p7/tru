@@ -4,8 +4,16 @@ import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
 
 class POCardSumerry extends StatefulWidget {
-  final int poNum;
-  const POCardSumerry({super.key, required this.poNum});
+  final String poNum;
+  final String name;
+  final double amount;
+  final String vendorName;
+  const POCardSumerry(
+      {super.key,
+      required this.poNum,
+      required this.name,
+      required this.amount,
+      required this.vendorName});
 
   @override
   State<POCardSumerry> createState() => _POCardSumerryState();
@@ -53,7 +61,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "${widget.poNum}",
+                    widget.poNum,
                     style: GoogleFonts.inter(
                         fontSize: 25,
                         color: AppColors.primaryText,
@@ -99,7 +107,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                       height: 5,
                     ),
                     Text(
-                      "SOLAE COMPANY INDIA PRIVATE LIMITED ",
+                      widget.vendorName,
                       style: GoogleFonts.inter(
                           fontSize: 15,
                           color: AppColors.primaryText,
@@ -120,7 +128,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                       height: 5,
                     ),
                     Text(
-                      "SUJEET G",
+                      '${widget.name}',
                       style: GoogleFonts.inter(
                           fontSize: 15,
                           color: AppColors.primaryText,
@@ -251,7 +259,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                         height: 5,
                       ),
                       Text(
-                        "XX,XX,XXX/-",
+                        "${widget.amount}",
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             color: AppColors.primaryText,
