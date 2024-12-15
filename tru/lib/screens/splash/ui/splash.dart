@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tru/screens/home/bloc/home_bloc.dart';
 import 'package:tru/screens/login/bloc/user_auth_bloc.dart';
 import 'package:tru/screens/login/ui/login_screen.dart';
 import 'package:tru/screens/home/ui/po_approval.dart';
@@ -18,7 +19,11 @@ class SplashScreen extends StatelessWidget {
       listener: (context, state) {
         if (state.status == AuthStatus.authenticated) {
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (_) => const PoApprovel()),
+            MaterialPageRoute(
+                builder: (_) => BlocProvider(
+                      create: (context) => HomeBloc(),
+                      child: const PoApprovel(),
+                    )),
           );
         } else if (state.status == AuthStatus.unauthenticated) {
           Navigator.of(context).pushReplacement(

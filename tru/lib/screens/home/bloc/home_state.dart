@@ -1,34 +1,73 @@
 part of 'home_bloc.dart';
 
-// sealed class HomeState extends Equatable {
-//   const HomeState();
-
-//   @override
-//   List<Object> get props => [];
-// }
-
-class HomeState extends Equatable {
+sealed class HomeState extends Equatable {
   final String selectedValue;
-  final List<Map<String, String>> dropdownOptions;
-
+  final bool showSnackbar;
+  final String snackbarMessage;
+  final bool isLoading;
+  final List<dynamic>? poRequests;
+  final String? errorMessage;
   const HomeState({
     this.selectedValue = 'Approvels',
-    this.dropdownOptions = const [
-      {'value': 'Approvels', 'label': 'My Approvels'},
-      {'value': 'Requests', 'label': 'My Requests'},
-    ],
+    this.showSnackbar = false,
+    this.snackbarMessage = '',
+    this.isLoading = false,
+    this.poRequests,
+    this.errorMessage,
   });
 
-  HomeState copyWith({
-    String? selectedValue,
-    List<Map<String, String>>? dropdownOptions,
-  }) {
-    return HomeState(
-      selectedValue: selectedValue ?? this.selectedValue,
-      dropdownOptions: dropdownOptions ?? this.dropdownOptions,
-    );
-  }
-
   @override
-  List<Object> get props => [selectedValue, dropdownOptions];
+  List<Object?> get props => [
+        selectedValue,
+        showSnackbar,
+        snackbarMessage,
+        isLoading,
+        poRequests,
+        errorMessage
+      ];
+}
+
+final class HomeInitial extends HomeState {
+  const HomeInitial()
+      : super(
+            selectedValue: 'Approvels',
+            showSnackbar: false,
+            snackbarMessage: '');
+}
+
+class DropdownChangedState extends HomeState {
+  const DropdownChangedState(
+      {required String selectedValue,
+      bool showSnackbar = true,
+      String? snackbarMessage})
+      : super(
+          selectedValue: selectedValue,
+          showSnackbar: showSnackbar,
+          snackbarMessage: snackbarMessage ??
+              (selectedValue == 'Approvels'
+                  ? 'You selected My Approvals'
+                  : 'You selected My Requests'),
+        );
+}
+
+class PORequestsLoadingState extends HomeState {
+  const PORequestsLoadingState({
+    required super.selectedValue,
+  }) : super(
+          isLoading: true,
+        );
+}
+
+class PORequestsLoadedState extends HomeState {
+  const PORequestsLoadedState({
+    required super.selectedValue,
+    required List<dynamic> super.poRequests,
+  });
+}
+
+class PORequestsErrorState extends HomeState {
+  const PORequestsErrorState({
+    required super.selectedValue,
+    required String super.errorMessage,
+  }) : super(isLoading: false);
 }

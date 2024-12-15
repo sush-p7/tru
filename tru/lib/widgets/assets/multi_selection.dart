@@ -1,11 +1,13 @@
 import 'dart:convert';
 import 'dart:ffi';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
+import 'package:tru/screens/home/bloc/home_bloc.dart';
 import 'package:tru/screens/po_detals/ui/po_details.dart';
 import 'package:tru/widgets/po_card.dart';
 
@@ -24,46 +26,53 @@ class _MultiSelectState extends State<MultiSelect> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ListView(
-        children: [
-          const SizedBox(height: 10),
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: productData.length,
-            separatorBuilder: (context, index) => const SizedBox(height: 1),
-            itemBuilder: (BuildContext context, int index) {
-              ProductCard currentProduct = productData[index];
-              return PrettyCard(
-                name: currentProduct.name,
-                id: currentProduct.id,
-                amount: currentProduct.amount,
-                isSelected: trashCan.contains(currentProduct),
-                trashCan: trashCan,
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const PODetails()));
+      body: BlocConsumer<HomeBloc, HomeState>(
+        listener: (context, state) {
+          // TODO: implement listener
+        },
+        builder: (context, state) {
+          return ListView(
+            children: [
+              const SizedBox(height: 10),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: productData.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 1),
+                itemBuilder: (BuildContext context, int index) {
+                  ProductCard currentProduct = productData[index];
+                  return PrettyCard(
+                    name: currentProduct.name,
+                    id: currentProduct.id,
+                    amount: currentProduct.amount,
+                    isSelected: trashCan.contains(currentProduct),
+                    trashCan: trashCan,
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const PODetails()));
 
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Single Tap!'),
-                    duration: Duration(seconds: 1),
-                  ));
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('Single Tap!'),
+                        duration: Duration(seconds: 1),
+                      ));
+                    },
+                    onDelete: () {
+                      if (trashCan.contains(productData[index])) {
+                        trashCan.remove(productData[index]);
+                        setState(() {});
+                      } else {
+                        trashCan.add(productData[index]);
+                        setState(() {});
+                      }
+                    },
+                  );
                 },
-                onDelete: () {
-                  if (trashCan.contains(productData[index])) {
-                    trashCan.remove(productData[index]);
-                    setState(() {});
-                  } else {
-                    trashCan.add(productData[index]);
-                    setState(() {});
-                  }
-                },
-              );
-            },
-          ),
-        ],
+              ),
+            ],
+          );
+        },
       ),
       bottomNavigationBar: trashCan.isNotEmpty
           ? BottomAppBar(
@@ -190,8 +199,9 @@ class _PrettyCardState extends State<PrettyCard> {
                     ],
                   ),
                 )
-              : const POCardSumerry(
+              : POCardSumerry(
                   poNum: 77,
+                  // poData: widget.poData,
                 ),
           // Add a trailing widget to show selection state
           trailing: widget.isSelected
