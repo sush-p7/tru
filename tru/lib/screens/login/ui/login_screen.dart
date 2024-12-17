@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ionicons/ionicons.dart';
+import 'package:tru/screens/home/bloc/home_bloc.dart';
 import 'package:tru/screens/login/bloc/user_auth_bloc.dart';
 import 'package:tru/screens/home/ui/po_approval.dart';
 import 'package:tru/widgets/assets/btn.dart';
@@ -38,7 +39,11 @@ class _LoginScreenState extends State<LoginScreen> {
 
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => const PoApprovel()),
+            MaterialPageRoute(
+                builder: (context) => BlocProvider(
+                      create: (context) => HomeBloc(),
+                      child: const PoApprovel(),
+                    )),
           );
         }
 

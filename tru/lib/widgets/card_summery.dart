@@ -6,7 +6,8 @@ import 'package:tru/widgets/po_list.dart';
 
 //TODO : This is a used to line details widget
 class CustomPOCard extends StatefulWidget {
-  const CustomPOCard({super.key});
+  final String id;
+  const CustomPOCard({super.key, required this.id});
 
   @override
   State<CustomPOCard> createState() => _CustomPOCardState();
@@ -94,7 +95,7 @@ class _CustomPOCardState extends State<CustomPOCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "61517",
+                    widget.id,
                     style: GoogleFonts.inter(
                         fontSize: 25,
                         color: AppColors.primaryText,

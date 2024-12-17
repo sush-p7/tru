@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:ffi';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -28,6 +29,139 @@ class _MultiSelectState extends State<MultiSelect> {
     return BlocBuilder<HomeBloc, HomeState>(
       builder: (context, state) {
         // Check if we have loaded PO requests
+        if (state is POApprovelsLoadedState) {
+          log(state.poApprovels.toString());
+          List<ProductCard> apiProductData =
+              state.poApprovels!.map((poRequest) {
+            // Extract PODetails, defaulting to an empty map if null
+            final podDetails = poRequest['PODetails'] ?? {};
+
+            return ProductCard(
+              id: (poRequest['PONum']?.toString() ?? 'N/A'),
+
+              // Safely extract data from PODetails or use fallback values
+              name: podDetails['EntryPerson'] ?? 'Unknown',
+
+              amount: double.tryParse(
+                      podDetails['TotalOrder']?.toString() ?? '0') ??
+                  double.tryParse(poRequest['POAmt']?.toString() ?? '0') ??
+                  0,
+
+              vendorName: podDetails['VendorName'] ??
+                  poRequest['VendorName'] ??
+                  'Unknown',
+            );
+          }).toList();
+
+          //print(state.poApprovels);
+
+          return Scaffold(
+            body: ListView(
+              children: [
+                const SizedBox(height: 10),
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: apiProductData.length,
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 1),
+                  itemBuilder: (BuildContext context, int index) {
+                    ProductCard currentProduct = apiProductData[index];
+                    return BlocConsumer<HomeBloc, HomeState>(
+                      listener: (context, state) {
+                        // TODO: implement listener
+                        if (state is NavigateToPODetailsState) {
+                          context
+                              .read<HomeBloc>()
+                              .add(NavigateToPODetailsEvent(currentProduct.id));
+                        }
+                      },
+                      builder: (context, state) {
+                        return PrettyCard(
+                          name: currentProduct.name,
+                          id: currentProduct.id,
+                          amount: currentProduct.amount,
+                          isSelected: trashCan.contains(currentProduct),
+                          trashCan: trashCan,
+                          vendorName: currentProduct.vendorName,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PODetails(
+                                          id: currentProduct.id,
+                                        )));
+
+                            // context.read<HomeBloc>().add(
+                            //     NavigateToPODetailsEvent(currentProduct.id));
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text('Single Tap!'),
+                              duration: Duration(seconds: 1),
+                            ));
+                          },
+                          onDelete: () {
+                            if (trashCan.contains(apiProductData[index])) {
+                              trashCan.remove(apiProductData[index]);
+                              setState(() {});
+                            } else {
+                              trashCan.add(apiProductData[index]);
+                              setState(() {});
+                            }
+                          },
+                        );
+                      },
+                    );
+                  },
+                ),
+              ],
+            ),
+            bottomNavigationBar: trashCan.isNotEmpty
+                ? BottomAppBar(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        IconButton(
+                            onPressed: () {
+                              setState(() {
+                                // Remove all selected items from apiProductData
+                                apiProductData.removeWhere(
+                                    (product) => trashCan.contains(product));
+                                trashCan.clear();
+                              });
+                            },
+                            icon: const Icon(
+                              Ionicons.checkmark_circle,
+                              color: Colors.green,
+                              size: 40,
+                            )),
+                        IconButton(
+                          icon: const Icon(
+                            Ionicons.trash_bin,
+                            color: Colors.red,
+                            size: 30,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              // Remove all selected items from apiProductData
+                              apiProductData.removeWhere(
+                                  (product) => trashCan.contains(product));
+                              trashCan.clear();
+                            });
+                          },
+                        ),
+                        IconButton(
+                          icon: const Icon(Ionicons.close_outline,
+                              size: 30, color: AppColors.primaryText),
+                          onPressed: () async {},
+                        ),
+                      ],
+                    ),
+                  )
+                : null,
+          );
+        }
         if (state is PORequestsLoadedState) {
           // Convert API data to ProductCard if needed
           List<ProductCard> apiProductData = state.poRequests?.map((poRequest) {
@@ -53,33 +187,50 @@ class _MultiSelectState extends State<MultiSelect> {
                       const SizedBox(height: 1),
                   itemBuilder: (BuildContext context, int index) {
                     ProductCard currentProduct = apiProductData[index];
-                    return PrettyCard(
-                      name: currentProduct.name,
-                      id: currentProduct.id,
-                      amount: currentProduct.amount,
-                      isSelected: trashCan.contains(currentProduct),
-                      trashCan: trashCan,
-                      vendorName: currentProduct.vendorName,
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => const PODetails()));
-
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          content: Text('Single Tap!'),
-                          duration: Duration(seconds: 1),
-                        ));
-                      },
-                      onDelete: () {
-                        if (trashCan.contains(apiProductData[index])) {
-                          trashCan.remove(apiProductData[index]);
-                          setState(() {});
-                        } else {
-                          trashCan.add(apiProductData[index]);
-                          setState(() {});
+                    return BlocConsumer<HomeBloc, HomeState>(
+                      listener: (context, state) {
+                        // TODO: implement listener
+                        if (state is NavigateToPODetailsState) {
+                          context
+                              .read<HomeBloc>()
+                              .add(NavigateToPODetailsEvent(currentProduct.id));
                         }
+                      },
+                      builder: (context, state) {
+                        return PrettyCard(
+                          name: currentProduct.name,
+                          id: currentProduct.id,
+                          amount: currentProduct.amount,
+                          isSelected: trashCan.contains(currentProduct),
+                          trashCan: trashCan,
+                          vendorName: currentProduct.vendorName,
+                          onTap: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => PODetails(
+                                          id: currentProduct.id,
+                                        )));
+
+                            // context.read<HomeBloc>().add(
+                            //     NavigateToPODetailsEvent(currentProduct.id));
+
+                            ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text('Single Tap!'),
+                              duration: Duration(seconds: 1),
+                            ));
+                          },
+                          onDelete: () {
+                            if (trashCan.contains(apiProductData[index])) {
+                              trashCan.remove(apiProductData[index]);
+                              setState(() {});
+                            } else {
+                              trashCan.add(apiProductData[index]);
+                              setState(() {});
+                            }
+                          },
+                        );
                       },
                     );
                   },

@@ -49,6 +49,12 @@ class _PoApprovelState extends State<PoApprovel> {
             backgroundColor: Colors.red,
           ));
         }
+        if (state is POApprovelsErrorState) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(state.errorMessage ?? 'Unknown error'),
+            backgroundColor: Colors.red,
+          ));
+        }
       },
       builder: (context, state) {
         // if (state is PORequestsLoadingState) {
@@ -165,7 +171,7 @@ class _PoApprovelState extends State<PoApprovel> {
               const SizedBox(height: 10),
               Expanded(
                 child: Container(
-                  color: Colors.green,
+                  // color: const Color.fromARGB(255, 255, 255, 255),
                   child: BlocConsumer<HomeBloc, HomeState>(
                     listener: (context, state) {
                       // TODO: implement listener
@@ -173,6 +179,12 @@ class _PoApprovelState extends State<PoApprovel> {
                     builder: (context, state) {
                       if (state is PORequestsLoadingState) {
                         return Center(child: CircularProgressIndicator());
+                      }
+                      if (state is POApprovelsLoadingState) {
+                        return Center(
+                            child: CircularProgressIndicator(
+                          color: Colors.red,
+                        ));
                       }
                       return const MultiSelect();
                     },

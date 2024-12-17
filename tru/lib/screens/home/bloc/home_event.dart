@@ -19,3 +19,17 @@ class DropdownChangedEvent extends HomeEvent {
 class FetchPORequestsEvent extends HomeEvent {
   const FetchPORequestsEvent();
 }
+
+class FetchPOApprovelsEvent extends HomeEvent {
+  const FetchPOApprovelsEvent();
+}
+
+class NavigateToPODetailsEvent extends HomeEvent {
+  final String poId;
+  NavigateToPODetailsEvent(this.poId);
+}
+
+class LoadPORequestsEvent extends HomeEvent {
+  final String poId;
+  const LoadPORequestsEvent(this.poId);
+}

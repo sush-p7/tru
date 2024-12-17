@@ -5,7 +5,8 @@ import 'package:tru/assets/app_colors.dart';
 import 'package:tru/widgets/card_summery.dart';
 
 class PODetails extends StatefulWidget {
-  const PODetails({super.key});
+  final String id;
+  const PODetails({super.key, required this.id});
 
   @override
   State<PODetails> createState() => _PODetailsState();
@@ -72,7 +73,9 @@ class _PODetailsState extends State<PODetails> {
             ),
           ],
         ),
-        body: const CustomPOCard()
+        body: CustomPOCard(
+          id: widget.id,
+        )
 
         // Container(
         //   margin: EdgeInsets.all(15),

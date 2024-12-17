@@ -6,6 +6,7 @@ sealed class HomeState extends Equatable {
   final String snackbarMessage;
   final bool isLoading;
   final List<dynamic>? poRequests;
+  final List<dynamic>? poApprovels;
   final String? errorMessage;
   const HomeState({
     this.selectedValue = 'Approvels',
@@ -13,6 +14,7 @@ sealed class HomeState extends Equatable {
     this.snackbarMessage = '',
     this.isLoading = false,
     this.poRequests,
+    this.poApprovels,
     this.errorMessage,
   });
 
@@ -70,4 +72,31 @@ class PORequestsErrorState extends HomeState {
     required super.selectedValue,
     required String super.errorMessage,
   }) : super(isLoading: false);
+}
+
+class POApprovelsLoadingState extends HomeState {
+  const POApprovelsLoadingState({
+    required super.selectedValue,
+  }) : super(
+          isLoading: true,
+        );
+}
+
+class POApprovelsLoadedState extends HomeState {
+  const POApprovelsLoadedState({
+    required super.selectedValue,
+    required List<dynamic> super.poApprovels,
+  });
+}
+
+class POApprovelsErrorState extends HomeState {
+  const POApprovelsErrorState({
+    required super.selectedValue,
+    required String super.errorMessage,
+  }) : super(isLoading: false);
+}
+
+class NavigateToPODetailsState extends HomeState {
+  final String poId;
+  NavigateToPODetailsState({required this.poId});
 }
