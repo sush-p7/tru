@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
+import 'package:tru/widgets/assets/multi_selection.dart';
 import 'package:tru/widgets/card_summery.dart';
 
 class PODetails extends StatefulWidget {
   final String id;
-  const PODetails({super.key, required this.id});
+  final ProductCard product;
+  const PODetails({super.key, required this.id, required this.product});
 
   @override
   State<PODetails> createState() => _PODetailsState();
@@ -74,6 +76,7 @@ class _PODetailsState extends State<PODetails> {
           ],
         ),
         body: CustomPOCard(
+          product: widget.product,
           id: widget.id,
         )
 

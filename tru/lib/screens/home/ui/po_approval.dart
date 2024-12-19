@@ -178,10 +178,10 @@ class _PoApprovelState extends State<PoApprovel> {
                     },
                     builder: (context, state) {
                       if (state is PORequestsLoadingState) {
-                        return Center(child: CircularProgressIndicator());
+                        return const Center(child: CircularProgressIndicator());
                       }
                       if (state is POApprovelsLoadingState) {
-                        return Center(
+                        return const Center(
                             child: CircularProgressIndicator(
                           color: Colors.red,
                         ));

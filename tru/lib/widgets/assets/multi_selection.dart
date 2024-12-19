@@ -35,7 +35,7 @@ class _MultiSelectState extends State<MultiSelect> {
               state.poApprovels!.map((poRequest) {
             // Extract PODetails, defaulting to an empty map if null
             final podDetails = poRequest['PODetails'] ?? {};
-
+            //print(podDetails);
             return ProductCard(
               id: (poRequest['PONum']?.toString() ?? 'N/A'),
 
@@ -50,6 +50,10 @@ class _MultiSelectState extends State<MultiSelect> {
               vendorName: podDetails['VendorName'] ??
                   poRequest['VendorName'] ??
                   'Unknown',
+              docTotalCheages: podDetails['DocTotalCharges'] ?? '0.0',
+              docTotalTax: podDetails['DocTotalTax'] ?? '0.0',
+              docTotalMis: podDetails['DocTotalMisc'] ?? '0.0',
+              docTotalOrder: podDetails['DocTotalOrder'] ?? '0.0',
             );
           }).toList();
 
@@ -84,12 +88,17 @@ class _MultiSelectState extends State<MultiSelect> {
                           isSelected: trashCan.contains(currentProduct),
                           trashCan: trashCan,
                           vendorName: currentProduct.vendorName,
+                          docTotalCheages: currentProduct.docTotalCheages,
+                          docTotalMis: currentProduct.docTotalMis,
+                          docTotalOrder: currentProduct.docTotalOrder,
+                          docTotalTax: currentProduct.docTotalTax,
                           onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => PODetails(
                                           id: currentProduct.id,
+                                          product: currentProduct,
                                         )));
 
                             // context.read<HomeBloc>().add(
@@ -166,12 +175,17 @@ class _MultiSelectState extends State<MultiSelect> {
           // Convert API data to ProductCard if needed
           List<ProductCard> apiProductData = state.poRequests?.map((poRequest) {
                 return ProductCard(
-                    id: poRequest['PONum'].toString() ?? 'N/A',
-                    name: poRequest['EntryPerson'] ?? 'Unknown',
-                    amount: double.tryParse(
-                            poRequest['TotalOrder']?.toString() ?? '0') ??
-                        0,
-                    vendorName: poRequest['VendorName'] ?? 'Unknown');
+                  id: poRequest['PONum'].toString() ?? 'N/A',
+                  name: poRequest['EntryPerson'] ?? 'Unknown',
+                  amount: double.tryParse(
+                          poRequest['TotalOrder']?.toString() ?? '0') ??
+                      0,
+                  vendorName: poRequest['VendorName'] ?? 'Unknown',
+                  docTotalCheages: poRequest['DocTotalCharges'] ?? '0.0',
+                  docTotalTax: poRequest['DocTotalTax'] ?? '0.0',
+                  docTotalMis: poRequest['DocTotalMisc'] ?? '0.0',
+                  docTotalOrder: poRequest['DocTotalOrder'] ?? '0.0',
+                );
               }).toList() ??
               [];
 
@@ -204,12 +218,17 @@ class _MultiSelectState extends State<MultiSelect> {
                           isSelected: trashCan.contains(currentProduct),
                           trashCan: trashCan,
                           vendorName: currentProduct.vendorName,
+                          docTotalCheages: currentProduct.docTotalCheages,
+                          docTotalMis: currentProduct.docTotalMis,
+                          docTotalOrder: currentProduct.docTotalOrder,
+                          docTotalTax: currentProduct.docTotalTax,
                           onTap: () {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                     builder: (context) => PODetails(
                                           id: currentProduct.id,
+                                          product: currentProduct,
                                         )));
 
                             // context.read<HomeBloc>().add(
@@ -310,6 +329,10 @@ class PrettyCard extends StatefulWidget {
   final void Function()? onDelete;
   final void Function()? onTap;
   final List trashCan;
+  final String docTotalCheages;
+  final String docTotalTax;
+  final String docTotalMis;
+  final String docTotalOrder;
 
   const PrettyCard(
       {super.key,
@@ -320,7 +343,11 @@ class PrettyCard extends StatefulWidget {
       required this.trashCan,
       required this.id,
       required this.amount,
-      required this.vendorName});
+      required this.vendorName,
+      required this.docTotalCheages,
+      required this.docTotalTax,
+      required this.docTotalMis,
+      required this.docTotalOrder});
 
   @override
   State<PrettyCard> createState() => _PrettyCardState();
@@ -367,6 +394,10 @@ class _PrettyCardState extends State<PrettyCard> {
                   name: widget.name,
                   amount: widget.amount,
                   vendorName: widget.vendorName,
+                  docTotalCheages: widget.docTotalCheages,
+                  docTotalMis: widget.docTotalMis,
+                  docTotalOrder: widget.docTotalOrder,
+                  docTotalTax: widget.docTotalTax,
                   // poData: widget.poData,
                 ),
           // Add a trailing widget to show selection state
@@ -384,8 +415,16 @@ class ProductCard {
   final String name;
   final double amount;
   final String vendorName;
+  final String docTotalCheages;
+  final String docTotalTax;
+  final String docTotalMis;
+  final String docTotalOrder;
 
   ProductCard({
+    required this.docTotalCheages,
+    required this.docTotalTax,
+    required this.docTotalMis,
+    required this.docTotalOrder,
     required this.id,
     required this.name,
     required this.amount,

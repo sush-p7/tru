@@ -158,7 +158,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final ENV = await storage.read(key: 'ENV');
     final URL = await storage.read(key: 'URL');
 
-    final url = 'https://${URL}/${ENV}/api/v1/Erp.BO.POSvc/POes/';
+    final url = 'https://$URL/$ENV/api/v1/Erp.BO.POSvc/POes/';
 
     try {
       final response = await httpClient.get(
@@ -186,7 +186,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     } catch (e) {
       print('Error in fetchPurchaseOrders: $e');
-      throw e;
+      rethrow;
     }
   }
 }

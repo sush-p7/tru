@@ -2,11 +2,10 @@ import 'dart:convert';
 // import 'package:logger/logger.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:tru/screens/home/ui/po_approval.dart';
-import 'package:tru/screens/po_detals/ui/po_details.dart';
+
 part 'home_event.dart';
 part 'home_state.dart';
 
@@ -111,7 +110,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
       // Prepare the API URL
       final uri = Uri.parse(
-        'https://erp-application.jwllogic.com/e11dev2100/api/v1/Erp.BO.POApvMsgSvc/List',
+        'https://erp-application.jwllogic.com/e11dev2100/api/v1/Erp.BO.POApvMsgSvc/POApvMsgs',
       );
 
       // Make the API call
@@ -120,8 +119,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $storedToken',
-          // Add any necessary authentication headers
-          // 'Authorization': 'Bearer YOUR_TOKEN',
         },
       );
 
@@ -160,12 +157,6 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       //print(combinedPOData);
       emit(POApprovelsLoadedState(
           selectedValue: state.selectedValue, poApprovels: combinedPOData));
-
-      // emit(POApprovelsLoadedState(
-      //     selectedValue: state.selectedValue, poApprovels: []));
-      // emit(POApprovelsErrorState(
-      //     selectedValue: state.selectedValue,
-      //     errorMessage: 'Failed to load PO Requests: '));
     } catch (e) {
       emit(POApprovelsErrorState(
           selectedValue: state.selectedValue,

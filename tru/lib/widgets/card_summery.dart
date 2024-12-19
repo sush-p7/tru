@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
+import 'package:tru/widgets/assets/multi_selection.dart';
 import 'package:tru/widgets/po_list.dart';
 
 //TODO : This is a used to line details widget
 class CustomPOCard extends StatefulWidget {
   final String id;
-  const CustomPOCard({super.key, required this.id});
+  final ProductCard product;
+  const CustomPOCard({super.key, required this.id, required this.product});
 
   @override
   State<CustomPOCard> createState() => _CustomPOCardState();
@@ -141,7 +143,7 @@ class _CustomPOCardState extends State<CustomPOCard> {
                       height: 5,
                     ),
                     Text(
-                      "SOLAE COMPANY INDIA PRIVATE LIMITED ",
+                      widget.product.vendorName,
                       style: GoogleFonts.inter(
                           fontSize: 15,
                           color: AppColors.primaryText,
@@ -162,7 +164,7 @@ class _CustomPOCardState extends State<CustomPOCard> {
                       height: 5,
                     ),
                     Text(
-                      "SUJEET G",
+                      widget.product.name,
                       style: GoogleFonts.inter(
                           fontSize: 15,
                           color: AppColors.primaryText,
@@ -257,7 +259,7 @@ class _CustomPOCardState extends State<CustomPOCard> {
                         height: 5,
                       ),
                       Text(
-                        "XX,XX,XXX/- ",
+                        widget.product.docTotalCheages,
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             color: AppColors.primaryText,
@@ -277,7 +279,7 @@ class _CustomPOCardState extends State<CustomPOCard> {
                         height: 5,
                       ),
                       Text(
-                        "XX,XX,XXX/-",
+                        widget.product.docTotalMis,
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             color: AppColors.primaryText,
@@ -297,7 +299,7 @@ class _CustomPOCardState extends State<CustomPOCard> {
                         height: 5,
                       ),
                       Text(
-                        "XX,XX,XXX/-",
+                        widget.product.docTotalTax,
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             color: AppColors.primaryText,
@@ -317,7 +319,7 @@ class _CustomPOCardState extends State<CustomPOCard> {
                         height: 5,
                       ),
                       Text(
-                        "XX,XX,XXX/-",
+                        widget.product.docTotalOrder,
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             color: AppColors.primaryText,

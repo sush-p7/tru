@@ -8,12 +8,21 @@ class POCardSumerry extends StatefulWidget {
   final String name;
   final double amount;
   final String vendorName;
-  const POCardSumerry(
-      {super.key,
-      required this.poNum,
-      required this.name,
-      required this.amount,
-      required this.vendorName});
+  final String docTotalCheages;
+  final String docTotalTax;
+  final String docTotalMis;
+  final String docTotalOrder;
+  const POCardSumerry({
+    super.key,
+    required this.poNum,
+    required this.name,
+    required this.amount,
+    required this.vendorName,
+    required this.docTotalTax,
+    required this.docTotalMis,
+    required this.docTotalOrder,
+    required this.docTotalCheages,
+  });
 
   @override
   State<POCardSumerry> createState() => _POCardSumerryState();
@@ -128,7 +137,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                       height: 5,
                     ),
                     Text(
-                      '${widget.name}',
+                      widget.name,
                       style: GoogleFonts.inter(
                           fontSize: 15,
                           color: AppColors.primaryText,
@@ -199,7 +208,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                         height: 5,
                       ),
                       Text(
-                        "XX,XX,XXX/- ",
+                        '${widget.docTotalCheages}',
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             color: AppColors.primaryText,
@@ -219,7 +228,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                         height: 5,
                       ),
                       Text(
-                        "XX,XX,XXX/-",
+                        "${widget.docTotalMis}",
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             color: AppColors.primaryText,
@@ -239,7 +248,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                         height: 5,
                       ),
                       Text(
-                        "XX,XX,XXX/-",
+                        "${widget.docTotalTax}",
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             color: AppColors.primaryText,
@@ -259,7 +268,7 @@ class _POCardSumerryState extends State<POCardSumerry> {
                         height: 5,
                       ),
                       Text(
-                        "${widget.amount}",
+                        "${widget.docTotalOrder}",
                         style: GoogleFonts.inter(
                             fontSize: 15,
                             color: AppColors.primaryText,
