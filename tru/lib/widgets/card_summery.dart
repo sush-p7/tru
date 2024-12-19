@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
+import 'package:tru/screens/po_detals/bloc/po_detail_bloc.dart';
 import 'package:tru/widgets/assets/multi_selection.dart';
 import 'package:tru/widgets/po_list.dart';
 
@@ -16,6 +18,17 @@ class CustomPOCard extends StatefulWidget {
 }
 
 class _CustomPOCardState extends State<CustomPOCard> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<PODetailsBloc>().add(
+          FetchPODetails(
+            company: "JWL",
+            poNumber: widget.id,
+          ),
+        );
+  }
+
   final List<FoodItem> foodItems = [
     FoodItem(
       id: '01',
@@ -60,297 +73,631 @@ class _CustomPOCardState extends State<CustomPOCard> {
   ];
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // First Row at the top of the Column
-        const SizedBox(
-          height: 15,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Text('Top Row First Item'),
-            Container(
-              margin: const EdgeInsets.only(left: 15, right: 15),
-              // padding: EdgeInsets.all(15),
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: AppColors.primaryText,
-                borderRadius: BorderRadius.circular(50),
+    return BlocConsumer<PODetailsBloc, PODetailsState>(
+      listener: (context, state) {
+        // TODO: implement listener
+
+        if (state is PODetailsLoading) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Loading details...")),
+          );
+        } else if (state is PODetailsError) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text("Error: ${state.message}")),
+          );
+        }
+      },
+      builder: (context, state) {
+        if (state is PODetailsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (state is PODetailsLoaded) {
+          print(state.poDetails);
+
+          List<FoodItem> Items = [];
+          if (state.poDetails['value'] != null &&
+              state.poDetails['value'] is List) {
+            Items = (state.poDetails['value'] as List).map((item) {
+              return FoodItem(
+                id: item['PODetail_PONUM']?.toString() ?? '', // Map to id
+                code: item['PODetail_PartNum']?.toString() ?? '', // Map to code
+                name: item['PODetail_PartNum']?.toString() ??
+                    '', // No corresponding field in the JSON
+                price: item['PODetail_PartNum']?.toString() ??
+                    '', // No corresponding field in the JSON
+                qty: item['PODetail_OpenLine']?.toString() ?? '', // Map to qty
+                rate:
+                    item['PODetail_VoidLine']?.toString() ?? '', // Map to rate
+              );
+            }).toList();
+          }
+          return Column(
+            children: [
+              // First Row at the top of the Column
+              const SizedBox(
+                height: 15,
               ),
-              // color: AppColors.primaryText,
-              child: Center(
-                  child: Text(
-                "01",
-                style: GoogleFonts.inter(
-                    fontSize: 25,
-                    color: AppColors.white,
-                    fontWeight: FontWeight.w800),
-              )),
-            ),
-            Expanded(
-              child: Column(
-                // verticalDirection: ,
-                mainAxisAlignment: MainAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    widget.id,
-                    style: GoogleFonts.inter(
-                        fontSize: 25,
-                        color: AppColors.primaryText,
-                        fontWeight: FontWeight.w800),
+                  // Text('Top Row First Item'),
+                  Container(
+                    margin: const EdgeInsets.only(left: 15, right: 15),
+                    // padding: EdgeInsets.all(15),
+                    width: 60,
+                    height: 60,
+                    decoration: BoxDecoration(
+                      color: AppColors.primaryText,
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    // color: AppColors.primaryText,
+                    child: Center(
+                        child: Text(
+                      "01",
+                      style: GoogleFonts.inter(
+                          fontSize: 25,
+                          color: AppColors.white,
+                          fontWeight: FontWeight.w800),
+                    )),
                   ),
-                  Text(
-                    "Date : 12-10-2024",
-                    style: GoogleFonts.inter(
-                        fontSize: 12,
-                        color: AppColors.primaryText,
-                        fontWeight: FontWeight.w500),
+                  Expanded(
+                    child: Column(
+                      // verticalDirection: ,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          widget.id,
+                          style: GoogleFonts.inter(
+                              fontSize: 25,
+                              color: AppColors.primaryText,
+                              fontWeight: FontWeight.w800),
+                        ),
+                        Text(
+                          "Date : 12-10-2024",
+                          style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: AppColors.primaryText,
+                              fontWeight: FontWeight.w500),
+                        )
+                      ],
+                    ),
                   )
+                  // Text('Top Row Second Item'),
                 ],
               ),
-            )
-            // Text('Top Row Second Item'),
-          ],
-        ),
-        // const SizedBox(
-        //   height: 15,
-        // ),
-        // Second Row with nested Columns
-        Container(
-          margin: const EdgeInsets.all(15),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // First nested Column
-              Expanded(
-                child: Column(
+              // const SizedBox(
+              //   height: 15,
+              // ),
+              // Second Row with nested Columns
+              Container(
+                margin: const EdgeInsets.all(15),
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      "Supplier ",
-                      style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: AppColors.primaryText,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      widget.product.vendorName,
-                      style: GoogleFonts.inter(
-                          fontSize: 15,
-                          color: AppColors.primaryText,
-                          fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-
-                    Text(
-                      "Buyer ",
-                      style: GoogleFonts.inter(
-                          fontSize: 12,
-                          color: AppColors.primaryText,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Text(
-                      widget.product.name,
-                      style: GoogleFonts.inter(
-                          fontSize: 15,
-                          color: AppColors.primaryText,
-                          fontWeight: FontWeight.w800),
-                    ),
-                    const SizedBox(
-                      height: 30,
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // Text('Nested Column 1 - Row 1'),
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: () async {
-                              String? result = await showInputDialog(
-                                context: context,
-                                title: 'Enter Your Comment',
-                                hintText: 'Type something here...',
-                              );
-
-                              if (result != null && result.isNotEmpty) {
-                                // Do something with the result
-                                print('Input received: $result');
-                              } else {
-                                print('No input provided');
-                              }
-                            },
-                            child: Container(
-                              width: 70,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                color: AppColors.success,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              // color: AppColors.primaryText,
-                              child: const Center(
-                                  child: Icon(
-                                Ionicons.checkmark_outline,
-                                color: AppColors.white,
-                                size: 35,
-                              )),
-                            ),
+                    // First nested Column
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Supplier ",
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w500),
                           ),
-                        ),
-                        Flexible(
-                          child: GestureDetector(
-                            onTap: () {},
-                            child: Container(
-                              width: 70,
-                              height: 50,
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            widget.product.vendorName,
+                            style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
 
-                              decoration: BoxDecoration(
-                                color: AppColors.error,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              // color: AppColors.primaryText,
-                              child: const Center(
-                                child: Icon(
-                                  Ionicons.close_outline,
-                                  color: AppColors.white,
-                                  size: 35,
+                          Text(
+                            "Buyer ",
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            widget.product.name,
+                            style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(
+                            height: 30,
+                          ),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              // Text('Nested Column 1 - Row 1'),
+                              Flexible(
+                                child: GestureDetector(
+                                  onTap: () async {
+                                    String? result = await showInputDialog(
+                                      context: context,
+                                      title: 'Enter Your Comment',
+                                      hintText: 'Type something here...',
+                                    );
+
+                                    if (result != null && result.isNotEmpty) {
+                                      // Do something with the result
+                                      print('Input received: $result');
+                                    } else {
+                                      print('No input provided');
+                                    }
+                                  },
+                                  child: Container(
+                                    width: 70,
+                                    height: 50,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.success,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    // color: AppColors.primaryText,
+                                    child: const Center(
+                                        child: Icon(
+                                      Ionicons.checkmark_outline,
+                                      color: AppColors.white,
+                                      size: 35,
+                                    )),
+                                  ),
                                 ),
                               ),
-                            ),
+                              Flexible(
+                                child: GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    width: 70,
+                                    height: 50,
+
+                                    decoration: BoxDecoration(
+                                      color: AppColors.error,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    // color: AppColors.primaryText,
+                                    child: const Center(
+                                      child: Icon(
+                                        Ionicons.close_outline,
+                                        color: AppColors.white,
+                                        size: 35,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          // You can add more rows or widgets here
+                        ],
+                      ),
                     ),
-                    // You can add more rows or widgets here
+
+                    // Second nested Column
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(left: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Charges ",
+                              style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: AppColors.primaryText,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              widget.product.docTotalCheages,
+                              style: GoogleFonts.inter(
+                                  fontSize: 15,
+                                  color: AppColors.primaryText,
+                                  fontWeight: FontWeight.w800),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              "Misc ",
+                              style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: AppColors.primaryText,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              widget.product.docTotalMis,
+                              style: GoogleFonts.inter(
+                                  fontSize: 15,
+                                  color: AppColors.primaryText,
+                                  fontWeight: FontWeight.w800),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              "Tax ",
+                              style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: AppColors.primaryText,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              widget.product.docTotalTax,
+                              style: GoogleFonts.inter(
+                                  fontSize: 15,
+                                  color: AppColors.primaryText,
+                                  fontWeight: FontWeight.w800),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            Text(
+                              "Total ",
+                              style: GoogleFonts.inter(
+                                  fontSize: 12,
+                                  color: AppColors.primaryText,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            const SizedBox(
+                              height: 5,
+                            ),
+                            Text(
+                              widget.product.docTotalOrder,
+                              style: GoogleFonts.inter(
+                                  fontSize: 15,
+                                  color: AppColors.primaryText,
+                                  fontWeight: FontWeight.w800),
+                            ),
+                            const SizedBox(
+                              height: 15,
+                            ),
+                            const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Text('Nested Column 2 - Row 1'),
+                              ],
+                            ),
+                            // You can add more rows or widgets here
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-
-              // Second nested Column
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.only(left: 20),
+              Container(
+                width: MediaQuery.of(context).size.width * 1.0,
+                height: 1,
+                color: AppColors.border,
+              ),
+              CustomFoodList(
+                // foodItems: foodItems,
+                foodItems: Items,
+              )
+            ],
+          );
+        }
+        return Column(
+          children: [
+            // First Row at the top of the Column
+            const SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Text('Top Row First Item'),
+                Container(
+                  margin: const EdgeInsets.only(left: 15, right: 15),
+                  // padding: EdgeInsets.all(15),
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: AppColors.primaryText,
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  // color: AppColors.primaryText,
+                  child: Center(
+                      child: Text(
+                    "01",
+                    style: GoogleFonts.inter(
+                        fontSize: 25,
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w800),
+                  )),
+                ),
+                Expanded(
                   child: Column(
+                    // verticalDirection: ,
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Charges ",
+                        widget.id,
+                        style: GoogleFonts.inter(
+                            fontSize: 25,
+                            color: AppColors.primaryText,
+                            fontWeight: FontWeight.w800),
+                      ),
+                      Text(
+                        "Date : 12-10-2024",
                         style: GoogleFonts.inter(
                             fontSize: 12,
                             color: AppColors.primaryText,
                             fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.product.docTotalCheages,
-                        style: GoogleFonts.inter(
-                            fontSize: 15,
-                            color: AppColors.primaryText,
-                            fontWeight: FontWeight.w800),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        "Misc ",
-                        style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: AppColors.primaryText,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.product.docTotalMis,
-                        style: GoogleFonts.inter(
-                            fontSize: 15,
-                            color: AppColors.primaryText,
-                            fontWeight: FontWeight.w800),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        "Tax ",
-                        style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: AppColors.primaryText,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.product.docTotalTax,
-                        style: GoogleFonts.inter(
-                            fontSize: 15,
-                            color: AppColors.primaryText,
-                            fontWeight: FontWeight.w800),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        "Total ",
-                        style: GoogleFonts.inter(
-                            fontSize: 12,
-                            color: AppColors.primaryText,
-                            fontWeight: FontWeight.w500),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Text(
-                        widget.product.docTotalOrder,
-                        style: GoogleFonts.inter(
-                            fontSize: 15,
-                            color: AppColors.primaryText,
-                            fontWeight: FontWeight.w800),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          // Text('Nested Column 2 - Row 1'),
-                        ],
-                      ),
-                      // You can add more rows or widgets here
+                      )
                     ],
                   ),
-                ),
+                )
+                // Text('Top Row Second Item'),
+              ],
+            ),
+            // const SizedBox(
+            //   height: 15,
+            // ),
+            // Second Row with nested Columns
+            Container(
+              margin: const EdgeInsets.all(15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // First nested Column
+                  Expanded(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Supplier ",
+                          style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: AppColors.primaryText,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          widget.product.vendorName,
+                          style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: AppColors.primaryText,
+                              fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(
+                          height: 15,
+                        ),
+
+                        Text(
+                          "Buyer ",
+                          style: GoogleFonts.inter(
+                              fontSize: 12,
+                              color: AppColors.primaryText,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(
+                          widget.product.name,
+                          style: GoogleFonts.inter(
+                              fontSize: 15,
+                              color: AppColors.primaryText,
+                              fontWeight: FontWeight.w800),
+                        ),
+                        const SizedBox(
+                          height: 30,
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            // Text('Nested Column 1 - Row 1'),
+                            Flexible(
+                              child: GestureDetector(
+                                onTap: () async {
+                                  String? result = await showInputDialog(
+                                    context: context,
+                                    title: 'Enter Your Comment',
+                                    hintText: 'Type something here...',
+                                  );
+
+                                  if (result != null && result.isNotEmpty) {
+                                    // Do something with the result
+                                    print('Input received: $result');
+                                  } else {
+                                    print('No input provided');
+                                  }
+                                },
+                                child: Container(
+                                  width: 70,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.success,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  // color: AppColors.primaryText,
+                                  child: const Center(
+                                      child: Icon(
+                                    Ionicons.checkmark_outline,
+                                    color: AppColors.white,
+                                    size: 35,
+                                  )),
+                                ),
+                              ),
+                            ),
+                            Flexible(
+                              child: GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                  width: 70,
+                                  height: 50,
+
+                                  decoration: BoxDecoration(
+                                    color: AppColors.error,
+                                    borderRadius: BorderRadius.circular(15),
+                                  ),
+                                  // color: AppColors.primaryText,
+                                  child: const Center(
+                                    child: Icon(
+                                      Ionicons.close_outline,
+                                      color: AppColors.white,
+                                      size: 35,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // You can add more rows or widgets here
+                      ],
+                    ),
+                  ),
+
+                  // Second nested Column
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(left: 20),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Charges ",
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            widget.product.docTotalCheages,
+                            style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            "Misc ",
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            widget.product.docTotalMis,
+                            style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            "Tax ",
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            widget.product.docTotalTax,
+                            style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Text(
+                            "Total ",
+                            style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Text(
+                            widget.product.docTotalOrder,
+                            style: GoogleFonts.inter(
+                                fontSize: 15,
+                                color: AppColors.primaryText,
+                                fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              // Text('Nested Column 2 - Row 1'),
+                            ],
+                          ),
+                          // You can add more rows or widgets here
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
-        Container(
-          width: MediaQuery.of(context).size.width * 1.0,
-          height: 1,
-          color: AppColors.border,
-        ),
-        CustomFoodList(
-          foodItems: foodItems,
-        )
-      ],
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width * 1.0,
+              height: 1,
+              color: AppColors.border,
+            ),
+            CustomFoodList(
+              foodItems: foodItems,
+            )
+          ],
+        );
+      },
     );
   }
 }

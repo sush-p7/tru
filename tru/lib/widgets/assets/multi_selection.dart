@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
 import 'package:tru/screens/home/bloc/home_bloc.dart';
+import 'package:tru/screens/po_detals/bloc/po_detail_bloc.dart';
 import 'package:tru/screens/po_detals/ui/po_details.dart';
 import 'package:tru/widgets/po_card.dart';
 
@@ -93,14 +94,49 @@ class _MultiSelectState extends State<MultiSelect> {
                           docTotalOrder: currentProduct.docTotalOrder,
                           docTotalTax: currentProduct.docTotalTax,
                           onTap: () {
+                            // context.read<PODetailsBloc>().add(FetchPODetails(
+                            //     company: "JWL", poNumber: currentProduct.id));
                             Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => PODetails(
-                                          id: currentProduct.id,
-                                          product: currentProduct,
-                                        )));
-
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => BlocProvider(
+                                  create: (context) => PODetailsBloc()
+                                    ..add(FetchPODetails(
+                                      company: "JWL",
+                                      poNumber: currentProduct.id,
+                                    )),
+                                  child: PODetails(
+                                    id: currentProduct.id,
+                                    product: currentProduct,
+                                  ),
+                                ),
+                              ),
+                            );
+                            // Navigator.push(
+                            //     context,
+                            //     MaterialPageRoute(
+                            //         builder: (context) => PODetails(
+                            //               id: currentProduct.id,
+                            //               product: currentProduct,
+                            //             )));
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => BlocProvider(
+                            //       create: (context) => PODetailsBloc()
+                            //         ..add(
+                            //           FetchPODetails(
+                            //             poNumber: currentProduct.id,
+                            //             company: "JWL",
+                            //           ),
+                            //         ),
+                            //       child: PODetails(
+                            //         id: currentProduct.id,
+                            //         product: currentProduct,
+                            //       ),
+                            //     ),
+                            //   ),
+                            // );
                             // context.read<HomeBloc>().add(
                             //     NavigateToPODetailsEvent(currentProduct.id));
 

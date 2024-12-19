@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
+import 'package:tru/screens/po_detals/bloc/po_detail_bloc.dart';
 import 'package:tru/widgets/assets/multi_selection.dart';
 import 'package:tru/widgets/card_summery.dart';
 
@@ -75,9 +77,12 @@ class _PODetailsState extends State<PODetails> {
             ),
           ],
         ),
-        body: CustomPOCard(
-          product: widget.product,
-          id: widget.id,
+        body: BlocProvider(
+          create: (context) => PODetailsBloc(),
+          child: CustomPOCard(
+            product: widget.product,
+            id: widget.id,
+          ),
         )
 
         // Container(

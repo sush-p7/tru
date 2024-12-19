@@ -5,6 +5,7 @@ import 'package:ionicons/ionicons.dart';
 import 'package:tru/assets/app_colors.dart';
 import 'package:tru/model/my_data.dart';
 import 'package:tru/screens/home/bloc/home_bloc.dart';
+import 'package:tru/screens/po_detals/bloc/po_detail_bloc.dart';
 import 'package:tru/widgets/app_bar.dart';
 import 'package:tru/widgets/assets/btn.dart';
 import 'package:tru/widgets/assets/multi_selection.dart';
@@ -186,7 +187,10 @@ class _PoApprovelState extends State<PoApprovel> {
                           color: Colors.red,
                         ));
                       }
-                      return const MultiSelect();
+                      return BlocProvider(
+                        create: (context) => PODetailsBloc(),
+                        child: const MultiSelect(),
+                      );
                     },
                   ),
                 ),
